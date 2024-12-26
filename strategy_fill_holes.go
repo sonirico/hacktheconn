@@ -24,7 +24,7 @@ func NewFillHolesStrategy(transports []http.RoundTripper) *FillHolesStrategy {
 // Acquire picks the transport with the least ongoing requests.
 func (fh *FillHolesStrategy) Acquire() (http.RoundTripper, error) {
 	if len(fh.transports) == 0 {
-		return nil, fmt.Errorf("no transports available")
+		return nil, ErrNoTransports
 	}
 
 	fh.mutex.Lock()

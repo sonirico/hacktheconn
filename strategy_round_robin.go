@@ -24,7 +24,7 @@ func NewRoundRobinStrategy(transports []http.RoundTripper) *RoundRobinStrategy {
 // Acquire picks the next transport in a round-robin manner.
 func (rr *RoundRobinStrategy) Acquire() (http.RoundTripper, error) {
 	if len(rr.transports) == 0 {
-		return nil, fmt.Errorf("no transports available")
+		return nil, ErrNoTransports
 	}
 
 	rr.mutex.Lock()
