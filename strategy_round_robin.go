@@ -36,18 +36,21 @@ func (rr *RoundRobinStrategy) Acquire() (http.RoundTripper, error) {
 
 func (rr *RoundRobinStrategy) Release(http.RoundTripper) {}
 
-type RoundRobinConfig struct {
-	Proxies          []string
-	TransportFactory func(string) (*http.Transport, error)
-}
+type (
+	OptRoundRobin = Option[RoundRobinConfig]
 
-type RoundRobinOption func(*RoundRobinConfig)
+	RoundRobinConfig struct {
+		baseStrategyConfig
+	}
+)
 
 // TransportRoundRobin creates a round-robin StrategyTransport with configurable options.
-func TransportRoundRobin(proxies []string, opts ...RoundRobinOption) http.RoundTripper {
+func TransportRoundRobin(proxies []string, opts ...OptRoundRobin) http.RoundTripper {
 	cfg := &RoundRobinConfig{
-		Proxies:          proxies,
-		TransportFactory: DefaultTransportFactory,
+		baseStrategyConfig{
+			Proxies:          proxies,
+			TransportFactory: DefaultTransportFactory,
+		},
 	}
 
 	for _, opt := range opts {
@@ -67,7 +70,7 @@ func TransportRoundRobin(proxies []string, opts ...RoundRobinOption) http.RoundT
 	return Transport(NewRoundRobinStrategy(transports))
 }
 
-func RoundRobinWithTransportFactory(factory func(string) (*http.Transport, error)) RoundRobinOption {
+func OptRoundRobinWithTransportFactory(factory func(string) (*http.Transport, error)) OptRoundRobin {
 	return func(cfg *RoundRobinConfig) {
 		cfg.TransportFactory = factory
 	}

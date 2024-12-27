@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// MockTransport is a mock http.RoundTripper for testing.
+// mockLeastResponseTimeTransport is a mock http.RoundTripper for testing.
 type MockTransport struct {
 	ID string
 }

@@ -55,20 +55,22 @@ func (fh *FillHolesStrategy) Release(transport http.RoundTripper) {
 			if fh.requestCounts[i] < 0 {
 				fh.requestCounts[i] = 0
 			}
-			break
+			return
 		}
 	}
 }
 
-type FillHolesConfig struct {
-	Proxies          []string
-	TransportFactory func(string) (*http.Transport, error)
-}
+type (
+	OptFillHoles func(*FillHolesConfig)
 
-type FillHolesOption func(*FillHolesConfig)
+	FillHolesConfig struct {
+		Proxies          []string
+		TransportFactory func(string) (*http.Transport, error)
+	}
+)
 
 // TransportFillHoles creates a round-robin StrategyTransport with configurable options.
-func TransportFillHoles(proxies []string, opts ...FillHolesOption) http.RoundTripper {
+func TransportFillHoles(proxies []string, opts ...OptFillHoles) http.RoundTripper {
 	cfg := &FillHolesConfig{
 		Proxies:          proxies,
 		TransportFactory: DefaultTransportFactory,
@@ -91,7 +93,7 @@ func TransportFillHoles(proxies []string, opts ...FillHolesOption) http.RoundTri
 	return Transport(NewFillHolesStrategy(transports))
 }
 
-func FillHolesWithTransportFactory(factory func(string) (*http.Transport, error)) FillHolesOption {
+func OptFillHolesWithTransportFactory(factory func(string) (*http.Transport, error)) OptFillHoles {
 	return func(cfg *FillHolesConfig) {
 		cfg.TransportFactory = factory
 	}

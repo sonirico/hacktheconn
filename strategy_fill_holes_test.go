@@ -12,15 +12,15 @@ func TestFillHolesStrategy(t *testing.T) {
 		&MockTransport{ID: "C"},
 	}
 
-	strategy := NewFillHolesStrategy(transports)
+	s := NewFillHolesStrategy(transports)
 
 	// Simulate request selection with uneven usage
-	strategy.Acquire() // A: 1, B: 0, C: 0
-	strategy.Acquire() // A: 1, B: 1, C: 0
-	strategy.Acquire() // A: 1, B: 1, C: 1
-	strategy.Acquire() // A: 2, B: 1, C: 1
+	_, _ = s.Acquire() // A: 1, B: 0, C: 0
+	_, _ = s.Acquire() // A: 1, B: 1, C: 0
+	_, _ = s.Acquire() // A: 1, B: 1, C: 1
+	_, _ = s.Acquire() // A: 2, B: 1, C: 1
 
-	transport, err := strategy.Acquire()
+	transport, err := s.Acquire()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -36,7 +36,7 @@ func TestFillHolesStrategy(t *testing.T) {
 
 	// Verify counts after selection
 	expectedCounts := []int{2, 2, 1}
-	for i, count := range strategy.requestCounts {
+	for i, count := range s.requestCounts {
 		if count != expectedCounts[i] {
 			t.Errorf("expected request count for transport %s to be %d, got %d",
 				transports[i].(*MockTransport).ID, expectedCounts[i], count)
