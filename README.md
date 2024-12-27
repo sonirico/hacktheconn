@@ -8,12 +8,14 @@
 2. [Features](#features)
 3. [Installation](#installation)
 4. [Quick Start](#quick-start)
-    - [Round-Robin Strategy Example](#round-robin-strategy-example)
-    - [Fill Holes Strategy Example](#fill-holes-strategy-example)
+   - [Round-Robin Strategy Example](#round-robin-strategy-example)
+   - [Fill Holes Strategy Example](#fill-holes-strategy-example)
+   - [Least Response Time Strategy Example](#least-response-time-strategy-example)
 5. [Strategies](#strategies)
-    - [Round-Robin](#round-robin)
-    - [Fill Holes](#fill-holes)
-    - [Custom Strategies](#custom-strategies)
+   - [Round-Robin](#round-robin)
+   - [Fill Holes](#fill-holes)
+   - [Least Response Time](#least-response-time)
+   - [Custom Strategies](#custom-strategies)
 6. [Contributing](#contributing)
 7. [License](#license)
 8. [Acknowledgments](#acknowledgments)
@@ -36,6 +38,7 @@ By default, Go’s `net/http` pools and reuses connections aggressively:
 
 - **Round-Robin Strategy**: Distributes requests evenly across connections.
 - **Fill Holes Strategy**: Routes requests to connections with the fewest concurrent requests.
+- **Least Response Time Strategy**: Dynamically selects the transport with the lowest response time, supporting customizable calculators (e.g., moving average, weighted average).
 - **Customizable Strategies**: Extendable with your own connection balancing algorithms.
 - **Proxy-Aware**: Supports both HTTP and SOCKS5 proxies.
 - **Optimized for Real-Time Applications**: Ensures fairness and low latency in high-throughput environments.
@@ -121,6 +124,47 @@ func main() {
 }
 ```
 
+### Least Response Time Strategy Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/sonirico/hacktheconn"
+)
+
+func main() {
+	proxies := []string{
+		"http://proxy1.example.com",
+		"http://proxy2.example.com",
+	}
+
+	// Create a least response time transport with weighted average calculator
+	transport := hacktheconn.TransportLeastResponseTime(
+		proxies,
+		hacktheconn.OptLeastResponseTimeWithCalculator(
+			hacktheconn.LeastResponseTimeWeightedAverageCalculator(0.75),
+		),
+	)
+
+	client := &http.Client{
+		Transport: transport,
+	}
+
+	resp, err := client.Get("https://example.com")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("Response status:", resp.Status)
+}
+```
+
 ## Strategies
 
 ### Round-Robin
@@ -130,6 +174,14 @@ Distributes requests evenly across available connections. Ensures that each tran
 ### Fill Holes
 
 Routes requests to the transport with the fewest concurrent requests. Ideal for environments with uneven workloads, ensuring efficient utilization of resources.
+
+### Least Response Time
+
+Selects the transport with the lowest response time. This strategy supports multiple calculators:
+
+- **Last Response Time Calculator**: Uses the most recent response time.
+- **Moving Average Calculator**: Averages the response times of the last `n` requests.
+- **Weighted Average Calculator**: Applies a weighted average, giving more importance to recent response times.
 
 ### Custom Strategies
 
