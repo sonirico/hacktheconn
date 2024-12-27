@@ -17,6 +17,7 @@ handling for distributed systems.
   - Last Response Time
   - Moving Average
   - Weighted Average
+
 - **Customizable Strategies**: Extendable with user-defined selection algorithms.
 - **Proxy Support**: Fully compatible with both HTTP and SOCKS5 proxies.
 
