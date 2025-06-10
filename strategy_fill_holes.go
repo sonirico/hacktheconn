@@ -93,6 +93,13 @@ func TransportFillHoles(proxies []string, opts ...OptFillHoles) http.RoundTrippe
 	return Transport(NewFillHolesStrategy(transports))
 }
 
+// TransportDirectFillHoles creates multiple direct connections using fill holes strategy.
+func TransportDirectFillHoles(connectionCount int, opts ...OptFillHoles) http.RoundTripper {
+	directProxies := MultiDirectTransportFactory(connectionCount)
+
+	return TransportFillHoles(directProxies, opts...)
+}
+
 func OptFillHolesWithTransportFactory(factory func(string) (*http.Transport, error)) OptFillHoles {
 	return func(cfg *FillHolesConfig) {
 		cfg.TransportFactory = factory

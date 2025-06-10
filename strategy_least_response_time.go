@@ -125,6 +125,13 @@ func TransportLeastResponseTime(proxies []string, opts ...OptLeastResponseTime) 
 	return Transport(NewLeastResponseTimeStrategy(transports, cfg.clock, cfg.responseTimeCalculator))
 }
 
+// TransportDirectLeastResponseTime creates multiple direct connections using least response time strategy.
+func TransportDirectLeastResponseTime(connectionCount int, opts ...OptLeastResponseTime) http.RoundTripper {
+	directProxies := MultiDirectTransportFactory(connectionCount)
+
+	return TransportLeastResponseTime(directProxies, opts...)
+}
+
 // OptLeastResponseTimeWithClock configures a custom clock function.
 func OptLeastResponseTimeWithClock(fn func() time.Time) OptLeastResponseTime {
 	return func(cfg *LeastResponseTimeConfig) {
