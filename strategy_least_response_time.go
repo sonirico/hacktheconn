@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sonirico/stadio/slices"
+	"github.com/sonirico/gozo/slices"
 )
 
 // ResponseTimeCalculator defines how response time is calculated.

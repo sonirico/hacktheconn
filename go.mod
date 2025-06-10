@@ -1,9 +1,9 @@
-module github.com/sonirico/HackTheConn
+module github.com/sonirico/hacktheconn
 
 go 1.22
 
 require (
-	github.com/sonirico/stadio v0.7.1
+	github.com/sonirico/gozo v0.1.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/net v0.33.0
 )
