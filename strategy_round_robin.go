@@ -75,3 +75,12 @@ func OptRoundRobinWithTransportFactory(factory func(string) (*http.Transport, er
 		cfg.TransportFactory = factory
 	}
 }
+
+// TransportDirectRoundRobin creates multiple direct connections using round-robin strategy.
+// This is useful when you're behind a load balancer and want multiple TCP connections
+// to take advantage of upstream rebalancing.
+func TransportDirectRoundRobin(connectionCount int, opts ...OptRoundRobin) http.RoundTripper {
+	directProxies := MultiDirectTransportFactory(connectionCount)
+
+	return TransportRoundRobin(directProxies, opts...)
+}
