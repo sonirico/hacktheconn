@@ -1,5 +1,5 @@
 /*
-Package main provides HTTP client strategies for dynamic transport selection based on various criteria.
+package hacktheconn provides HTTP client strategies for dynamic transport selection based on various criteria.
 It includes configurable strategies for efficient connection pooling and request routing, tailored for
 real-time, high-throughput applications.
 
@@ -133,4 +133,4 @@ Contributions are welcome! Please ensure your code is documented and tested.
 
 This package is licensed under the MIT License.
 */
-package main
+package hacktheconn
